@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Lapak | Tata Kelola Ruang Publik</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        
+        /* Pastikan Peta punya tinggi agar muncul */
+        #map { height: 400px; width: 100%; border-radius: 12px; z-index: 1; }
+        
+        /* Styling Form Modal agar Rapi */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+        .form-group input { 
+            width: 100%; padding: 10px; border: 1px solid #cbd5e1; 
+            border-radius: 6px; box-sizing: border-box; font-size: 14px;
+        }
+        .form-group input:focus { outline: 2px solid #1e3a8a; border-color: transparent; }
+
+        /* Tombol Utama */
+        .btn-primary { 
+            width: 100%; background: #1e3a8a; color: white; padding: 12px; 
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
+            transition: 0.3s; margin-top: 10px;
+        }
+        .btn-primary:hover { background: #1e40af; }
+
+        /* Tombol Sukses & Batal */
+        .btn-success { width: 100%; background: #10B981; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-danger-text { background: none; border: none; color: #EF4444; font-size: 12px; cursor: pointer; text-decoration: underline; width: 100%; }
+
+        /* Layout Grid */
+        .lapak-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-map-marker-alt"></i> E-Lapak
+        </div>
+        <div class="menu">
+            <a href="index.html" class="active">Beranda</a>
+            <a href="#area-peta">Peta Lokasi</a>
+            <a href="#">Cek Izin</a>
+            <a href="petugas.html" class="btn-login-nav">Login Petugas</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Tata Kelola Ruang Publik & UMKM</h1>
+            <p>Solusi Digital untuk Pedagang Kaki Lima yang Tertib, Legal, dan Bermartabat.</p>
+            <a href="#grid-section" class="btn-cta-orange">Cari Lokasi Sekarang ➝</a>
+        </div>
+    </div>
+
+    <div class="main-container" id="grid-section">
+        
+        <section class="white-section">
+            <h2 class="section-title">Pilih Lokasi Usaha Anda</h2>
+            
+            <div class="shift-selector" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                
+                <div style="margin-bottom: 25px;">
+                    <label for="zonaSelect" style="display:block; font-weight: 600; margin-bottom: 8px; color: #334155;">
+                     Zona Wilayah:
+                    </label>
+                    <select id="zonaSelect" style="padding: 10px 15px; width: 100%; max-width: 350px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background-color: #fff;">
+                        <option>Taman Monas (Zona Kuliner)</option>
+                        <option>Kawasan Kota Tua</option>
+                        <option>Area CFD (Khusus Minggu)</option>
+                    </select>
+                </div>
+                
+                <div id="info-shift" style="margin-bottom:15px; font-size:14px; color:#64748b;">
+                    Menampilkan data untuk <b style="color: #1e3a8a;">Shift Pagi</b>
+                </div>
+                
+                <div class="toggle-container" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <button class="toggle-btn active" onclick="gantiShift('pagi')" 
+                        style="padding: 10px 20px; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; background: #fff; transition: all 0.3s; min-width: 160px;">
+                        <div style="font-weight: bold; font-size: 15px;">☀️ Shift Pagi</div>
+                        <div style="font-size: 11px; margin-top: 2px; opacity: 0.8;">06.00 - 15.00 WIB</div>
+                    </button>
+
+                    <button class="toggle-btn" onclick="gantiShift('malam')" 
+                        style="padding: 10px 20px; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; background: #fff; transition: all 0.3s; min-width: 160px;">
+                        <div style="font-weight: bold; font-size: 15px;">🌙 Shift Malam</div>
+                        <div style="font-size: 11px; margin-top: 2px; opacity: 0.8;">16.00 - 23.00 WIB</div>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:20px; justify-content:center; margin: 20px 0 10px 0; font-size:13px; color:#555;">
+                <div style="display:flex; align-items:center;">
+                    <div style="width:14px; height:14px; background:#10B981; margin-right:6px; border-radius:3px;"></div> Tersedia
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <div style="width:14px; height:14px; background:#EF4444; margin-right:6px; border-radius:3px;"></div> Terisi
+                </div>
+            </div>
+
+            <div class="lapak-grid" id="gridDisplay"></div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="#area-peta" style="text-decoration: none; color: #1e3a8a; font-weight: bold;">
+                    Lihat tampilan peta visual 👇
+                </a>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <h2 class="section-title" style="color: #1e3a8a;">Cara Kerja E-Lapak</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Pilih Lokasi</h3>
+                    <p>Cari dan pilih lokasi lapak yang tersedia di peta interaktif sesuai kebutuhan Anda.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                    <h3>Bayar Retribusi</h3>
+                    <p>Lakukan pembayaran retribusi bulanan secara online dengan mudah via QRIS.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fas fa-qrcode"></i></div>
+                    <h3>Dapat Izin QR</h3>
+                    <p>Dapatkan izin digital dengan QR Code yang dapat diverifikasi oleh petugas di lapangan.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="area-peta" class="white-section" style="margin-top: 40px;">
+            <h2 class="section-title">📍 Peta Denah Lapak</h2>
+            <div id="map"></div>
+            <button id="btn-trigger-modal" style="display:none;" onclick="console.log('Triggered')"></button>
+        </section>
+
+    </div>
+
+    <footer>
+        &copy; 2025 Kelompok 1 Etika Profesi & UMKM. Hak cipta dilindungi.
+    </footer>
+
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeModal()" class="close-btn">&times;</span>
+
+            <div id="step-1">
+                <h3 id="modalTitle" style="color:#1e3a8a; margin-bottom: 5px;">Sewa Lapak</h3>
+                
+                <div id="modalInfo" style="background:#f1f5f9; padding:15px; border-radius:8px; font-size:13px; color:#334155; margin-bottom:15px; border-left: 4px solid #1e3a8a;">
+                    </div>
+                
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="namaInput" placeholder="Sesuai KTP">
+                </div>
+
+                <div class="form-group">
+                    <label>Jenis Dagangan</label>
+                    <input type="text" id="daganganInput" placeholder="Cth: Nasi Goreng">
+                </div>
+
+                <div class="form-group">
+                    <label>Nomor WhatsApp / HP</label>
+                    <input type="number" id="nomorInput" placeholder="0812xxxx">
+                </div>
+
+                <div class="form-group">
+                    <label>Akun Gmail</label>
+                    <input type="email" id="emailInput" placeholder="nama@gmail.com">
+                </div>
+                
+                <button class="btn-primary" onclick="keStepPembayaran()">LANJUT KE PEMBAYARAN ➝</button>
+            </div>
+
+            <div id="step-2" style="display: none;">
+                <h3 style="color:#1e3a8a; text-align: center;">Pembayaran Retribusi</h3>
+                
+                <p style="text-align:center;">Scan QRIS di bawah ini: <br>
+                    <b style="font-size:22px; color:#d32f2f;">Rp 50.000</b> 
+                    <br><span style="font-size:12px; color:#666;">(Masa Aktif 28 hari)</span>
+                </p>
+                
+                <div class="qris-box" style="background: #fff; padding: 10px; border: 2px dashed #1e3a8a; border-radius: 10px; margin: 15px auto; text-align: center; width: 220px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BAYAR-ELAPAK-50K" alt="QRIS" style="display:block; margin:0 auto; width:100%;">
+                </div>
+                
+                <p style="text-align:center; font-size:12px; color:#555; margin-bottom:15px;">
+                    <i>*Sistem otomatis mendeteksi pembayaran.</i>
+                </p>
+
+                <button class="btn-success" onclick="konfirmasiBayar()">✅ SAYA SUDAH BAYAR</button>
+                <button class="btn-danger-text" onclick="kembaliKeForm()">Kembali Edit Data</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>
