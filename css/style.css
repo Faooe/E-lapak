@@ -265,3 +265,101 @@ footer {
 .form-group { text-align: left; margin-bottom: 15px; }
 .form-group label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px; }
 .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+/* =======================================================
+   MEDIA QUERIES (UNTUK TAMPILAN HP / TABLET)
+   ======================================================= */
+
+@media screen and (max-width: 768px) {
+
+    /* 1. NAVBAR JADI TUMPUK (STACK) */
+    .navbar {
+        flex-direction: column; /* Ubah baris jadi kolom */
+        padding: 15px 20px; /* Kurangi padding samping */
+        gap: 15px;
+    }
+    
+    .navbar .menu {
+        display: flex;
+        flex-wrap: wrap; /* Agar menu turun ke bawah jika sempit */
+        justify-content: center;
+        gap: 15px;
+        width: 100%;
+    }
+    
+    .navbar .menu a {
+        margin-left: 0; /* Reset margin lama */
+        font-size: 13px; /* Kecilkan sedikit font menu */
+    }
+
+    /* 2. HERO SECTION & JUDUL */
+    .hero {
+        padding: 80px 20px 100px 20px; /* Kurangi tinggi hero */
+    }
+
+    .hero h1 {
+        font-size: 28px; /* Kecilkan judul besar (48px -> 28px) */
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    /* 3. MAIN CONTAINER & OVERLAP */
+    .main-container {
+        margin-top: -60px; /* Kurangi efek tumpuk (overlap) */
+        padding: 0 15px;
+    }
+
+    .white-section {
+        padding: 25px 15px; /* Kurangi padding dalam kotak putih */
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    /* 4. FORM & TOMBOL SHIFT */
+    #zonaSelect {
+        width: 100%; /* Agar select box tidak melebar keluar layar */
+        max-width: 100%;
+    }
+
+    .toggle-container {
+        flex-wrap: wrap; /* Agar tombol pagi/malam turun ke bawah jika layar sempit */
+    }
+    
+    .toggle-btn {
+        width: 100%; /* Tombol jadi lebar penuh agar mudah ditekan jari */
+        margin-bottom: 5px;
+    }
+
+    /* 5. GRID LAPAK */
+    .lapak-grid {
+        /* Paksa grid jadi 2 kolom di HP (atau 3 kalo muat) */
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .lapak-card {
+        padding: 10px; /* Kurangi padding kartu */
+        font-size: 12px; /* Kecilkan teks di kartu */
+    }
+
+    /* 6. MODAL & MAP */
+    .modal-content {
+        width: 95%; /* Lebarkan modal di HP */
+        padding: 20px;
+    }
+
+    #map {
+        height: 300px; /* Peta jangan terlalu tinggi di HP */
+    }
+    
+    /* Tombol Login di Navbar dirapikan */
+    .btn-login-nav {
+        width: 100%;
+        text-align: center;
+        display: block;
+        margin-top: 5px;
+    }
+}
